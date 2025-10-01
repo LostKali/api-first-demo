@@ -1,0 +1,117 @@
+syntax = "proto3";
+
+package home.kali.report;
+
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+option java_package = "home.kali.report.grpc";
+
+// =====================================================
+// gRPC service for Report Generator
+// =====================================================
+
+service ReportGeneratorService {
+  // Synchronous call to start report generation
+  rpc GenerateReport(GenerateReportRequest) returns (GenerateReportResponse);
+
+  // Get report status
+  rpc GetReportStatus(GetReportStatusRequest) returns (ReportStatusResponse);
+
+  // Cancel report generation
+  rpc CancelReport(CancelReportRequest) returns (ReportStatusResponse);
+
+  // Download completed report
+  rpc DownloadReport(DownloadReportRequest) returns (DownloadReportResponse);
+}
+
+// =====================================================
+// Requests
+// =====================================================
+
+message GenerateReportRequest {
+  string report_id = 1;
+  string date_from = 2; // YYYY-MM-DD format
+  string date_to = 3; // YYYY-MM-DD format
+  ReportType report_type = 4;
+  string description = 5;
+}
+
+message GetReportStatusRequest {
+  string report_id = 1;
+}
+
+message CancelReportRequest {
+  string report_id = 1;
+  string reason = 2;
+}
+
+message DownloadReportRequest {
+  string report_id = 1;
+  ReportFormat format = 2;
+}
+
+// =====================================================
+// Responses
+// =====================================================
+
+message GenerateReportResponse {
+  string report_id = 1;
+  ReportStatus status = 2;
+  google.protobuf.Timestamp estimated_completion_time = 3;
+  string message = 4;
+}
+
+message ReportStatusResponse {
+  string report_id = 1;
+  ReportStatus status = 2;
+  int32 progress = 3;
+  string current_step = 4;
+  int32 estimated_time_remaining_seconds = 5;
+  string error_message = 6;
+  int64 file_size_bytes = 7;
+  int32 row_count = 8;
+}
+
+message DownloadReportResponse {
+  string report_id = 1;
+  bytes file_content = 2;
+  string file_name = 3;
+  string content_type = 4;
+  int64 file_size_bytes = 5;
+}
+
+// =====================================================
+// Enums
+// =====================================================
+
+enum ReportType {
+  REPORT_TYPE_UNSPECIFIED = 0;
+  USER_ACTIVITY = 1;
+  SALES_ANALYSIS = 2;
+  SYSTEM_METRICS = 3;
+}
+
+enum ReportStatus {
+  REPORT_STATUS_UNSPECIFIED = 0;
+  PENDING = 1;
+  PROCESSING = 2;
+  COMPLETED = 3;
+  FAILED = 4;
+  CANCELLED = 5;
+}
+
+enum ReportPriority {
+  REPORT_PRIORITY_UNSPECIFIED = 0;
+  LOW = 1;
+  NORMAL = 2;
+  HIGH = 3;
+  URGENT = 4;
+}
+
+enum ReportFormat {
+  REPORT_FORMAT_UNSPECIFIED = 0;
+  CSV = 1;
+  EXCEL = 2;
+  PDF = 3;
+}
