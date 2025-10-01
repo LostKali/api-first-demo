@@ -8,8 +8,6 @@ services:
     environment:
       - REPORT_GENERATOR_SERVICE_URL=http://report-generator-service:8081
       - JAVA_OPTS=-Xmx512m -Xms256m
-    depends_on:
-      - report-generator-service
     networks:
       - api-first-network
 
@@ -24,6 +22,48 @@ services:
       - JAVA_OPTS=-Xmx512m -Xms256m
     networks:
       - api-first-network
+
+
+  # Pact Broker
+  pact-broker:
+    image: pactfoundation/pact-broker:latest
+    ports:
+      - "9292:9292"
+    environment:
+      - PACT_BROKER_DATABASE_URL=postgresql://pact_user:pact_password@pact-db:5432/pact_db
+      - PACT_BROKER_BASIC_AUTH_USERNAME=pact
+      - PACT_BROKER_BASIC_AUTH_PASSWORD=password
+      - PACT_BROKER_PUBLIC_HEARTBEAT=true
+      - PACT_BROKER_DATABASE_CONNECT_MAX_RETRIES=10
+      - PACT_BROKER_DATABASE_CONNECT_TIMEOUT=10
+    depends_on:
+      pact-db:
+        condition: service_healthy
+    networks:
+      - api-first-network
+    restart: unless-stopped
+
+  # Pact Broker Database
+  pact-db:
+    image: postgres:17.5
+    environment:
+      - POSTGRES_DB=pact_db
+      - POSTGRES_USER=pact_user
+      - POSTGRES_PASSWORD=pact_password
+    ports:
+      - "5435:5432"
+    volumes:
+      - api-first-pact-data:/var/lib/postgresql/data
+    networks:
+      - api-first-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pact_user -d pact_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  api-first-pact-data:
 
 networks:
   api-first-network:

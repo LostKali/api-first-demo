@@ -22,11 +22,11 @@
 
 - **Backend**: Spring Boot 3.5.3, Kotlin 2.0.0
 - **API**: REST API (JSON)
-- **API Documentation**: OpenAPI 3.0.3, Swagger UI
+- **API Documentation**: OpenAPI 3.0.3, Swagger UI (springdoc-openapi 2.7.0)
 - **Code Generation**: OpenAPI Generator 7.14.0
 - **HTTP Clients**: Spring HTTP Exchange, OpenFeign
-- **Testing**: JUnit 5
-- **Infrastructure**: Docker, Docker Compose
+- **Testing**: JUnit 5, Pact (Consumer-Driven Contract Testing)
+- **Infrastructure**: Docker, Docker Compose, PostgreSQL 17.5
 
 ## Быстрый старт
 
@@ -50,6 +50,7 @@ docker compose up -d
 
 - **Admin Service**: http://localhost:8080
 - **Report Generator Service**: http://localhost:8081
+- **Pact Broker**: http://localhost:9292
 
 ### API Endpoints
 
@@ -62,8 +63,11 @@ docker compose up -d
 
 Интерактивная документация API доступна через Swagger UI:
 
-- **Admin Service**: http://localhost:8080/swagger-ui/index.html
-- **OpenAPI Specification**: http://localhost:8080/v3/api-docs
+- **Admin Service**: http://localhost:8080/swagger-ui.html
+- **Report Generator Service**: http://localhost:8081/swagger-ui.html
+- **OpenAPI Specification**: 
+  - Admin Service: http://localhost:8080/v3/api-docs
+  - Report Generator Service: http://localhost:8081/v3/api-docs
 
 ### Code Generation
 
@@ -184,3 +188,165 @@ class ReportService(
     }
 }
 ```
+
+## Contract Testing с Pact
+
+Проект использует Pact для контрактного тестирования между сервисами, обеспечивая совместимость API между consumer (report-ui) и provider (admin-service).
+
+### Pact Broker
+
+Pact Broker запускается через Docker Compose и доступен по адресу:
+- **URL**: http://localhost:9292
+- **Username**: `pact`
+- **Password**: `password`
+- **Database**: PostgreSQL 17.5 (port 5435)
+
+### Запуск всей инфраструктуры
+
+```bash
+# Запуск всех сервисов (admin-service, report-generator-service, Pact Broker, PostgreSQL)
+docker compose up -d
+
+# Запуск только Pact Broker для контрактного тестирования
+docker compose up pact-broker pact-db -d
+```
+
+### Consumer Testing (Report UI)
+
+Report UI выступает в роли consumer и тестирует взаимодействие с Admin Service API.
+
+#### Команды для работы с Pact
+
+```bash
+cd report-ui
+
+# Полный цикл: очистка → тестирование → публикация
+npm run pact:full
+
+# Только генерация контрактов
+npm run test:pact
+
+# Только публикация контрактов
+npm run pact:publish
+
+# Очистка артефактов
+npm run pact:clean
+```
+
+#### Структура Pact тестов
+
+- **Тестовые файлы**: `src/pact/admin-service.pact.test.js`
+- **Фикстуры**: `src/pact/fixtures/interactions.js`, `src/pact/fixtures/test-data.js`
+- **Сгенерированные контракты**: `pacts/ReportUI-AdminService.json`
+- **Логи**: `logs/pact.log`
+
+#### Покрываемые API endpoints
+
+- `POST /api/admin/reports` - создание отчета
+- `GET /api/admin/reports` - получение списка отчетов
+- `GET /api/admin/reports/{reportId}` - получение деталей отчета
+- `DELETE /api/admin/reports/{reportId}` - отмена отчета
+- `GET /api/admin/reports/{reportId}/download` - скачивание отчета
+
+### Provider Testing (Admin Service)
+
+Admin Service выступает в роли provider и верифицирует соответствие контрактам.
+
+#### Настройка Provider тестов
+
+Provider тесты настроены в `build.gradle.kts`:
+
+```kotlin
+pact {
+    broker {
+        pactBrokerUrl = "http://localhost:9292"
+        pactBrokerUsername = System.getenv("PACT_BROKER_USERNAME") ?: "pact"
+        pactBrokerPassword = System.getenv("PACT_BROKER_PASSWORD") ?: "password"
+    }
+    
+    serviceProviders {
+        val provider = create("AdminService")
+        provider.stateChangeUrl = uri("http://localhost:8080/pact/stateChange").toURL()
+    }
+    
+    publish {
+        pactBrokerUrl = "http://localhost:9292"
+        version = "${project.version}"
+    }
+}
+```
+
+#### Запуск верификации
+
+1. Запуск всей инфраструктуры (включая Pact Broker)
+```bash
+docker compose up -d
+```
+2. Запуск верификации (приложение запускается автоматически в рамках теста)
+```bash
+./gradlew admin-service:admin-service-app:pactProviderTest
+```
+
+#### Структура Provider тестов
+
+- **Тестовый класс**: `src/test/kotlin/home/kali/admin/cdc/AdminServicePactProviderTest.kt`
+- **State change методы**: Настроены для всех состояний из контрактов
+- **Конфигурация**: Загружает контракты из Pact Broker автоматически
+
+### Workflow контрактного тестирования
+
+1. **Consumer тестирование (Report UI)**:
+   - Генерирует контракты на основе ожидаемого поведения API
+   - Публикует контракты в Pact Broker
+   - Команда: `npm run pact:full`
+
+2. **Provider верификация (Admin Service)**:
+   - Загружает контракты из Pact Broker автоматически
+   - Проверяет соответствие реального API сгенерированным контрактам
+   - Публикует результаты верификации обратно в Pact Broker
+   - Команда: `./gradlew pactProviderTest`
+
+4. **Интеграция в CI/CD**:
+   - Consumer тесты запускаются при изменении UI
+   - Provider тесты запускаются при изменении API
+   - Несовместимости выявляются на раннем этапе
+   - Webhook уведомления о результатах верификации
+
+### Просмотр контрактов и результатов
+
+После публикации контракты и результаты верификации доступны в Pact Broker:
+
+- **Главная страница**: http://localhost:9292
+- **Конкретный контракт**: http://localhost:9292/pacts/provider/AdminService/consumer/ReportUI/version/1.0.1
+- **Результаты верификации**: http://localhost:9292/pacts/provider/AdminService/consumer/ReportUI/version/1.0.1/verification-results
+
+#### Учетные данные для доступа:
+- **Username**: `pact`
+- **Password**: `password`
+
+### Быстрый старт контрактного тестирования
+
+```bash
+# 1. Запуск всей инфраструктуры (включая Pact Broker)
+docker compose up -d
+
+# 2. Consumer тестирование (Report UI)
+```bash
+cd report-ui
+```
+
+```bash
+npm run pact:full
+```
+
+# 3. Provider тестирование (Admin Service)
+```bash
+cd ../admin-service/admin-service-app
+```
+
+```bash
+./gradlew pactProviderTest
+```
+
+# 4. Просмотр результатов
+open http://localhost:9292
