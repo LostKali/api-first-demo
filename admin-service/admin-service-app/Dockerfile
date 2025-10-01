@@ -3,6 +3,7 @@ FROM gradle:8.14-jdk21 AS compile-image
 WORKDIR /app
 
 COPY admin-service /app/admin-service
+COPY docs /app/docs
 COPY *.kts /app/
 
 USER root
