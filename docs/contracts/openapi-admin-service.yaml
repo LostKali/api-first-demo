@@ -1,0 +1,345 @@
+openapi: 3.0.3
+info:
+  title: Admin Service API
+  description: API для управления отчетами
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@example.com
+
+servers:
+  - url: http://localhost:8080
+    description: Development server
+  - url: https://api.example.com
+    description: Production server
+
+paths:
+  /api/admin/reports:
+    post:
+      summary: Создать запрос на генерацию отчета
+      operationId: createReportRequest
+      tags:
+        - Reports
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReportRequest'
+      responses:
+        '201':
+          description: Запрос на отчет создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportRequest'
+        '400':
+          description: Неверные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    
+    get:
+      summary: Получить список отчетов
+      operationId: getReports
+      tags:
+        - Reports
+      parameters:
+        - name: status
+          in: query
+          description: Фильтр по статусу
+          schema:
+            $ref: '#/components/schemas/ReportStatus'
+        - name: page
+          in: query
+          description: Номер страницы
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: size
+          in: query
+          description: Размер страницы
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Список отчетов
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportListResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/admin/reports/{reportId}:
+    get:
+      summary: Получить детали отчета
+      operationId: getReport
+      tags:
+        - Reports
+      parameters:
+        - name: reportId
+          in: path
+          required: true
+          description: ID отчета
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Детали отчета
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportRequest'
+        '404':
+          description: Отчет не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    
+    delete:
+      summary: Отменить генерацию отчета
+      operationId: cancelReport
+      tags:
+        - Reports
+      parameters:
+        - name: reportId
+          in: path
+          required: true
+          description: ID отчета
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Отчет отменен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportRequest'
+        '404':
+          description: Отчет не найден
+        '409':
+          description: Отчет уже завершен или отменен
+        '500':
+          description: Внутренняя ошибка сервера
+
+  /api/admin/reports/{reportId}/download:
+    get:
+      summary: Скачать готовый отчет
+      operationId: downloadReport
+      tags:
+        - Reports
+      parameters:
+        - name: reportId
+          in: path
+          required: true
+          description: ID отчета
+          schema:
+            type: string
+            format: uuid
+        - name: format
+          in: query
+          description: Формат файла
+          schema:
+            type: string
+            enum: [csv, excel, pdf]
+            default: csv
+      responses:
+        '200':
+          description: Файл отчета
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Отчет не найден
+        '409':
+          description: Отчет еще не готов
+        '500':
+          description: Внутренняя ошибка сервера
+
+components:
+  schemas:
+    CreateReportRequest:
+      type: object
+      required:
+        - dateFrom
+        - dateTo
+        - reportType
+      properties:
+        dateFrom:
+          type: string
+          format: date
+          description: Начальная дата диапазона
+          example: "2024-01-01"
+        dateTo:
+          type: string
+          format: date
+          description: Конечная дата диапазона
+          example: "2024-01-31"
+        reportType:
+          type: string
+          enum: [USER_ACTIVITY, SALES_ANALYSIS, SYSTEM_METRICS]
+          description: Тип отчета
+          example: "USER_ACTIVITY"
+        description:
+          type: string
+          description: Описание отчета
+          example: "Отчет по активности пользователей за январь"
+        priority:
+          type: string
+          enum: [LOW, NORMAL, HIGH, URGENT]
+          default: NORMAL
+          description: Приоритет генерации
+          example: "NORMAL"
+
+    ReportRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Уникальный идентификатор отчета
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        dateFrom:
+          type: string
+          format: date
+          description: Начальная дата диапазона
+          example: "2024-01-01"
+        dateTo:
+          type: string
+          format: date
+          description: Конечная дата диапазона
+          example: "2024-01-31"
+        reportType:
+          type: string
+          enum: [USER_ACTIVITY, SALES_ANALYSIS, SYSTEM_METRICS]
+          description: Тип отчета
+          example: "USER_ACTIVITY"
+        status:
+          $ref: '#/components/schemas/ReportStatus'
+        priority:
+          type: string
+          enum: [LOW, NORMAL, HIGH, URGENT]
+          description: Приоритет генерации
+          example: "NORMAL"
+        description:
+          type: string
+          description: Описание отчета
+          example: "Отчет по активности пользователей за январь"
+        createdAt:
+          type: string
+          format: date-time
+          description: Время создания запроса
+          example: "2024-01-15T10:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Время последнего обновления
+          example: "2024-01-15T10:35:00Z"
+        estimatedCompletionTime:
+          type: string
+          format: date-time
+          description: Ожидаемое время завершения
+          example: "2024-01-15T10:45:00Z"
+        progress:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: Прогресс генерации в процентах
+          example: 75
+        errorMessage:
+          type: string
+          description: Сообщение об ошибке (если есть)
+          example: "Не удалось получить данные из внешней системы"
+
+    ReportStatus:
+      type: string
+      enum: [PENDING, PROCESSING, COMPLETED, FAILED, CANCELLED]
+      description: Статус отчета
+      example: "PROCESSING"
+
+    ReportListResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReportRequest'
+        totalElements:
+          type: integer
+          description: Общее количество отчетов
+          example: 150
+        totalPages:
+          type: integer
+          description: Общее количество страниц
+          example: 8
+        currentPage:
+          type: integer
+          description: Текущая страница
+          example: 0
+        pageSize:
+          type: integer
+          description: Размер страницы
+          example: 20
+
+    ErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Время возникновения ошибки
+          example: "2024-01-15T10:30:00Z"
+        status:
+          type: integer
+          description: HTTP статус код
+          example: 400
+        error:
+          type: string
+          description: Тип ошибки
+          example: "Bad Request"
+        message:
+          type: string
+          description: Сообщение об ошибке
+          example: "Invalid date range"
+        path:
+          type: string
+          description: Путь запроса
+          example: "/api/admin/reports"
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                description: Поле с ошибкой
+              message:
+                type: string
+                description: Сообщение об ошибке для поля
