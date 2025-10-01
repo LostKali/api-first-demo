@@ -10,3 +10,4 @@ springdoc:
     tags-sorter: alpha
     filter: true
     disable-swagger-default-url: true
+  show-actuator: true
