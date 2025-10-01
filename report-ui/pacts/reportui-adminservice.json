@@ -1,0 +1,158 @@
+{
+  "consumer": {
+    "name": "ReportUI"
+  },
+  "interactions": [
+    {
+      "description": "a request to cancel a report",
+      "providerState": "a report with id 123e4567-e89b-12d3-a456-426614174000 can be cancelled",
+      "request": {
+        "method": "DELETE",
+        "path": "/api/admin/reports/123e4567-e89b-12d3-a456-426614174000"
+      },
+      "response": {
+        "body": {
+          "createdAt": "2024-01-15T10:30:00Z",
+          "dateFrom": "2024-01-01",
+          "dateTo": "2024-01-31",
+          "description": "USER_ACTIVITY report",
+          "id": "123e4567-e89b-12d3-a456-426614174000",
+          "priority": "NORMAL",
+          "reportType": "USER_ACTIVITY",
+          "status": "CANCELLED",
+          "updatedAt": "2024-01-15T10:40:00Z"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "a request to create a report",
+      "providerState": "a report request can be created",
+      "request": {
+        "body": {
+          "dateFrom": "2024-01-01",
+          "dateTo": "2024-01-31",
+          "description": "USER_ACTIVITY report",
+          "priority": "NORMAL",
+          "reportType": "USER_ACTIVITY"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/api/admin/reports"
+      },
+      "response": {
+        "body": {
+          "createdAt": "2024-01-15T10:30:00Z",
+          "dateFrom": "2024-01-01",
+          "dateTo": "2024-01-31",
+          "description": "USER_ACTIVITY report",
+          "id": "123e4567-e89b-12d3-a456-426614174000",
+          "priority": "NORMAL",
+          "reportType": "USER_ACTIVITY",
+          "status": "PENDING",
+          "updatedAt": "2024-01-15T10:30:00Z"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 201
+      }
+    },
+    {
+      "description": "a request to download a report",
+      "providerState": "a report with id 123e4567-e89b-12d3-a456-426614174000 is ready for download",
+      "request": {
+        "method": "GET",
+        "path": "/api/admin/reports/123e4567-e89b-12d3-a456-426614174000/download",
+        "query": "format=csv"
+      },
+      "response": {
+        "body": "id,date,user,action\n1,2024-01-01,user1,login\n2,2024-01-02,user2,logout",
+        "headers": {
+          "Content-Disposition": "attachment; filename=\"report.csv\"",
+          "Content-Type": "application/octet-stream"
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "a request to get all reports",
+      "providerState": "reports exist",
+      "request": {
+        "method": "GET",
+        "path": "/api/admin/reports"
+      },
+      "response": {
+        "body": {
+          "content": [
+            {
+              "createdAt": "2024-01-15T10:30:00Z",
+              "dateFrom": "2024-01-01",
+              "dateTo": "2024-01-31",
+              "description": "USER_ACTIVITY report",
+              "id": "123e4567-e89b-12d3-a456-426614174000",
+              "priority": "NORMAL",
+              "reportType": "USER_ACTIVITY",
+              "status": "COMPLETED",
+              "updatedAt": "2024-01-15T11:30:00Z"
+            }
+          ],
+          "currentPage": 0,
+          "pageSize": 20,
+          "totalElements": 1,
+          "totalPages": 1
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "a request to get report details",
+      "providerState": "a report with id 123e4567-e89b-12d3-a456-426614174000 exists",
+      "request": {
+        "method": "GET",
+        "path": "/api/admin/reports/123e4567-e89b-12d3-a456-426614174000"
+      },
+      "response": {
+        "body": {
+          "createdAt": "2024-01-15T10:30:00Z",
+          "dateFrom": "2024-01-01",
+          "dateTo": "2024-01-31",
+          "description": "USER_ACTIVITY report",
+          "id": "123e4567-e89b-12d3-a456-426614174000",
+          "priority": "NORMAL",
+          "progress": 75,
+          "reportType": "USER_ACTIVITY",
+          "status": "PROCESSING",
+          "updatedAt": "2024-01-15T10:35:00Z"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 200
+      }
+    }
+  ],
+  "metadata": {
+    "pact-js": {
+      "version": "13.2.0"
+    },
+    "pactRust": {
+      "ffi": "0.4.22",
+      "models": "1.2.3"
+    },
+    "pactSpecification": {
+      "version": "2.0.0"
+    }
+  },
+  "provider": {
+    "name": "AdminService"
+  }
+}
