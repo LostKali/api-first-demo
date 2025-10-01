@@ -12,7 +12,11 @@
 ### Сервисы
 
 - **Admin Service** (`admin-service-app`) - REST API для управления отчетами
-- **Report Generator Service** (`report-generator-service-app`) - REST API для генерации отчетов
+- **Report Generator Service** - Модульная архитектура для генерации отчетов:
+  - `report-generator-service-api` - API интерфейсы и модели
+  - `report-generator-service-app` - REST API приложение
+  - `report-generator-service-sdk` - SDK для клиентов
+  - `report-generator-service-starter` - Spring Boot Starter
 
 ### Технологический стек
 
@@ -20,6 +24,7 @@
 - **API**: REST API (JSON)
 - **API Documentation**: OpenAPI 3.0.3, Swagger UI
 - **Code Generation**: OpenAPI Generator 7.14.0
+- **HTTP Clients**: Spring HTTP Exchange, OpenFeign
 - **Testing**: JUnit 5
 - **Infrastructure**: Docker, Docker Compose
 
@@ -67,13 +72,22 @@ docker compose up -d
 ```bash
 # Генерация Kotlin классов для Admin Service
 ./gradlew admin-service:admin-service-app:generateOpenApi
+
+# Генерация Kotlin классов для Report Generator Service
+./gradlew report-generator-service:report-generator-service-api:generateOpenApi
 ```
 
 #### Структура сгенерированного кода
 
+**Admin Service:**
 - **API Interfaces**: `build/generated/src/main/kotlin/home/kali/admin/generated/api/`
 - **Models**: `build/generated/src/main/kotlin/home/kali/admin/generated/model/`
-- **OpenAPI Contracts**: `docs/contracts/openapi-admin-service.yaml`
+- **OpenAPI Contract**: `docs/contracts/openapi-admin-service.yaml`
+
+**Report Generator Service:**
+- **API Interfaces**: `build/generated/src/main/kotlin/home/kali/report/generated/api/`
+- **Models**: `build/generated/src/main/kotlin/home/kali/report/generated/model/`
+- **OpenAPI Contract**: `docs/contracts/openapi-report-generator.yaml`
 
 #### Конфигурация генерации
 
@@ -96,3 +110,77 @@ tasks.register<GenerateTask>("generateOpenApi") {
 2. **Генерация кода**: Автоматическая генерация Kotlin интерфейсов и моделей
 3. **Реализация**: Реализация сгенерированных интерфейсов в контроллерах
 4. **Документация**: Автоматическая генерация Swagger UI из контрактов
+
+## Модульная архитектура Report Generator Service
+
+### Зачем нужны 4 модуля?
+
+**1. `report-generator-service-api`** - API контракты
+- Генерирует Kotlin интерфейсы и модели из OpenAPI контракта
+- Определяет API endpoints и модели данных
+- Содержит HttpExchange интерфейсы
+- Используется как зависимость другими модулями
+
+**2. `report-generator-service-app`** - REST API приложение
+- Реализует API интерфейсы из `report-generator-service-api`
+- Содержит контроллеры и бизнес-логику
+- Запускаемое Spring Boot приложение
+
+**3. `report-generator-service-sdk`** - SDK для клиентов
+- Предоставляет готовые HTTP клиенты для взаимодействия с API
+- Поддерживает два типа клиентов: OpenFeign и HTTP Exchange
+- Автоматическая конфигурация через Spring Boot
+
+**4. `report-generator-service-starter`** - Spring Boot Starter
+- Автоматическая конфигурация SDK при добавлении зависимости
+- Упрощает интеграцию для клиентских приложений
+- Следует паттерну Spring Boot Starters
+
+### HTTP Exchange Client Example
+
+```kotlin
+// Конфигурация HTTP Exchange клиента
+@Profile("http-exchange")
+@Configuration
+class InternalReportGeneratorHttpExchangeClientConfiguration {
+    @Bean
+    fun reportGeneratorClient(@Value("\${report-generator.url}") url: String): InternalHttpExchangeReportGeneratorApi {
+        val client = RestClient.builder().baseUrl(url).build()
+        return HttpServiceProxyFactory
+            .builderFor(RestClientAdapter.create(client)).build()
+            .createClient(InternalHttpExchangeReportGeneratorApi::class.java)
+    }
+}
+
+// Использование в сервисе
+@Service
+class ReportService(
+    private val reportGeneratorClient: InternalHttpExchangeReportGeneratorApi
+) {
+    fun generateReport(request: GenerateReportRequest): GenerateReportResponse {
+        return reportGeneratorClient.generateReport(request)
+    }
+}
+```
+
+### OpenFeign Client Example
+
+```kotlin
+// Конфигурация OpenFeign клиента
+@FeignClient(
+    value = "report-generator-client",
+    url = "\${report-generator.url}",
+    configuration = [InternalReportGeneratorClientConfiguration::class]
+)
+interface InternalReportGeneratorFeignClient : ReportGenerationApi
+
+// Использование в сервисе
+@Service
+class ReportService(
+    private val reportGeneratorClient: InternalReportGeneratorFeignClient
+) {
+    fun generateReport(request: GenerateReportRequest): GenerateReportResponse {
+        return reportGeneratorClient.generateReport(request)
+    }
+}
+```
