@@ -1,15 +1,30 @@
 package home.kali.report.controller
 
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
+import home.kali.report.generated.api.ReportGenerationApi
+import home.kali.report.generated.model.GenerateReportRequest
+import home.kali.report.generated.model.GenerateReportResponse
+import home.kali.report.generated.model.ReportStatusResponse
+import org.springframework.core.io.Resource
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
+import java.util.UUID
 
 @RestController
-@RequestMapping("/api/report")
-class ReportController {
+class ReportController : ReportGenerationApi {
 
-    @GetMapping("/hello")
-    fun hello(): String {
-        return "Hello World from Report Generator Service!"
+    override fun generateReport(generateReportRequest: GenerateReportRequest): ResponseEntity<GenerateReportResponse> {
+        TODO("Implement generateReport")
+    }
+
+    override fun getReportStatus(reportId: UUID): ResponseEntity<ReportStatusResponse> {
+        TODO("Implement getReportStatus")
+    }
+
+    override fun cancelReport(reportId: UUID): ResponseEntity<ReportStatusResponse> {
+        TODO("Implement cancelReport")
+    }
+
+    override fun downloadReport(reportId: UUID, format: String): ResponseEntity<Resource> {
+        TODO("Implement downloadReport")
     }
 } 
