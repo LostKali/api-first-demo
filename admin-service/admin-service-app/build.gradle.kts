@@ -51,7 +51,6 @@ tasks.named("compileKotlin") {
     dependsOn("generateOpenApi")
 }
 
-// Pact configuration
 pact {
     broker {
         pactBrokerUrl = "http://localhost:9292"
@@ -69,17 +68,6 @@ pact {
     }
 }
 
-// Copy Pact files from report-ui
-tasks.register<Copy>("copyPactFiles") {
-    group = "verification"
-    description = "Copies Pact files from report-ui for provider tests"
-    from("$rootDir/report-ui/pact/pacts/")
-    into("${layout.buildDirectory.get()}/pacts/")
-    include("*.json")
-    doFirst { file("${layout.buildDirectory.get()}/pacts/").mkdirs() }
-}
-
-// Provider tests (verifies contracts)
 tasks.register<Test>("pactProviderTest") {
     group = "verification"
     description = "Runs Pact provider verification tests"
