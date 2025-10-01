@@ -21,7 +21,15 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
+// Disable bootJar for starter module since it's not a runnable application
+tasks.bootJar {
+    enabled = false
+}
+
 dependencies {
+    api(project(":report-generator-service:report-generator-service-sdk"))
+    
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

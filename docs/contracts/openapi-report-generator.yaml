@@ -1,0 +1,285 @@
+openapi: 3.0.3
+info:
+  title: Report Generator Service API
+  description: API для генерации отчетов
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@example.com
+
+servers:
+  - url: http://localhost:8081
+    description: Development server
+  - url: https://report-generator.example.com
+    description: Production server
+
+paths:
+  /api/report/generate:
+    post:
+      summary: Запустить генерацию отчета
+      operationId: generateReport
+      tags:
+        - Report Generation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateReportRequest'
+      responses:
+        '202':
+          description: Генерация отчета запущена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenerateReportResponse'
+        '400':
+          description: Неверные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/report/{reportId}/status:
+    get:
+      summary: Получить статус генерации отчета
+      operationId: getReportStatus
+      tags:
+        - Report Generation
+      parameters:
+        - name: reportId
+          in: path
+          required: true
+          description: ID отчета
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Статус отчета
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportStatusResponse'
+        '404':
+          description: Отчет не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/report/{reportId}/cancel:
+    post:
+      summary: Отменить генерацию отчета
+      operationId: cancelReport
+      tags:
+        - Report Generation
+      parameters:
+        - name: reportId
+          in: path
+          required: true
+          description: ID отчета
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Генерация отчета отменена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportStatusResponse'
+        '404':
+          description: Отчет не найден
+        '409':
+          description: Отчет уже завершен или отменен
+        '500':
+          description: Внутренняя ошибка сервера
+
+  /api/report/{reportId}/download:
+    get:
+      summary: Скачать готовый отчет
+      operationId: downloadReport
+      tags:
+        - Report Generation
+      parameters:
+        - name: reportId
+          in: path
+          required: true
+          description: ID отчета
+          schema:
+            type: string
+            format: uuid
+        - name: format
+          in: query
+          description: Формат файла
+          schema:
+            type: string
+            enum: [csv, excel, pdf]
+            default: csv
+      responses:
+        '200':
+          description: Файл отчета
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Отчет не найден
+        '409':
+          description: Отчет еще не готов
+        '500':
+          description: Внутренняя ошибка сервера
+
+components:
+  schemas:
+    GenerateReportRequest:
+      type: object
+      required:
+        - reportId
+        - dateFrom
+        - dateTo
+        - reportType
+      properties:
+        reportId:
+          type: string
+          format: uuid
+          description: Уникальный идентификатор отчета
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        dateFrom:
+          type: string
+          format: date
+          description: Начальная дата диапазона
+          example: "2024-01-01"
+        dateTo:
+          type: string
+          format: date
+          description: Конечная дата диапазона
+          example: "2024-01-31"
+        reportType:
+          type: string
+          enum: [USER_ACTIVITY, SALES_ANALYSIS, SYSTEM_METRICS]
+          description: Тип отчета
+          example: "USER_ACTIVITY"
+        priority:
+          type: string
+          enum: [LOW, NORMAL, HIGH, URGENT]
+          default: NORMAL
+          description: Приоритет генерации
+          example: "NORMAL"
+        description:
+          type: string
+          description: Описание отчета
+          example: "Отчет по активности пользователей за январь"
+
+    GenerateReportResponse:
+      type: object
+      properties:
+        reportId:
+          type: string
+          format: uuid
+          description: Уникальный идентификатор отчета
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        status:
+          type: string
+          enum: [PENDING, PROCESSING, COMPLETED, FAILED, CANCELLED]
+          description: Статус отчета
+          example: "PENDING"
+        estimatedCompletionTime:
+          type: string
+          format: date-time
+          description: Ожидаемое время завершения
+          example: "2024-01-15T10:45:00Z"
+        message:
+          type: string
+          description: Сообщение о результате
+          example: "Генерация отчета запущена"
+
+    ReportStatusResponse:
+      type: object
+      properties:
+        reportId:
+          type: string
+          format: uuid
+          description: Уникальный идентификатор отчета
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        status:
+          type: string
+          enum: [PENDING, PROCESSING, COMPLETED, FAILED, CANCELLED]
+          description: Статус отчета
+          example: "PROCESSING"
+        progress:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: Прогресс генерации в процентах
+          example: 75
+        currentStep:
+          type: string
+          description: Текущий этап обработки
+          example: "Агрегация данных"
+        estimatedTimeRemaining:
+          type: integer
+          description: Оставшееся время в секундах
+          example: 300
+        errorMessage:
+          type: string
+          description: Сообщение об ошибке (если есть)
+          example: "Не удалось получить данные из внешней системы"
+        fileSize:
+          type: integer
+          description: Размер файла в байтах (если готов)
+          example: 1048576
+        rowCount:
+          type: integer
+          description: Количество строк в отчете (если готов)
+          example: 15000
+
+    ErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Время возникновения ошибки
+          example: "2024-01-15T10:30:00Z"
+        status:
+          type: integer
+          description: HTTP статус код
+          example: 400
+        error:
+          type: string
+          description: Тип ошибки
+          example: "Bad Request"
+        message:
+          type: string
+          description: Сообщение об ошибке
+          example: "Invalid report type"
+        path:
+          type: string
+          description: Путь запроса
+          example: "/api/report/generate"
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                description: Поле с ошибкой
+              message:
+                type: string
+                description: Сообщение об ошибке для поля 
