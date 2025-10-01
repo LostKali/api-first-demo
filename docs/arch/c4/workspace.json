@@ -1,0 +1,909 @@
+{
+  "configuration" : { },
+  "description" : "API-First Report Generation Architecture",
+  "documentation" : { },
+  "id" : 1,
+  "lastModifiedDate" : "2025-09-29T05:36:20Z",
+  "model" : {
+    "people" : [ {
+      "description" : "Администратор, который генерирует отчеты через UI",
+      "id" : "22",
+      "location" : "Unspecified",
+      "name" : "Admin User",
+      "properties" : {
+        "structurizr.dsl.identifier" : "user"
+      },
+      "relationships" : [ {
+        "description" : "Хочу отчет",
+        "destinationId" : "2",
+        "id" : "23",
+        "sourceId" : "22",
+        "tags" : "Relationship"
+      }, {
+        "description" : "Хочу отчет",
+        "destinationId" : "1",
+        "id" : "24",
+        "linkedRelationshipId" : "23",
+        "sourceId" : "22"
+      } ],
+      "tags" : "Element,Person"
+    } ],
+    "softwareSystems" : [ {
+      "containers" : [ {
+        "description" : "Web UI",
+        "documentation" : { },
+        "id" : "2",
+        "name" : "Admin Frontend",
+        "properties" : {
+          "structurizr.dsl.identifier" : "admindashboard"
+        },
+        "relationships" : [ {
+          "description" : "Отправляет запрос на генерацию отчета",
+          "destinationId" : "5",
+          "id" : "25",
+          "sourceId" : "2",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Отправляет запрос на генерацию отчета",
+          "destinationId" : "4",
+          "id" : "26",
+          "linkedRelationshipId" : "25",
+          "sourceId" : "2"
+        }, {
+          "description" : "Отправляет запрос на генерацию отчета",
+          "destinationId" : "3",
+          "id" : "27",
+          "linkedRelationshipId" : "25",
+          "sourceId" : "2"
+        }, {
+          "description" : "Отправляет запрос на генерацию отчета",
+          "destinationId" : "14",
+          "id" : "44",
+          "sourceId" : "2",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Отправляет запрос на генерацию отчета",
+          "destinationId" : "13",
+          "id" : "45",
+          "linkedRelationshipId" : "44",
+          "sourceId" : "2"
+        }, {
+          "description" : "Отправляет запрос на генерацию отчета",
+          "destinationId" : "12",
+          "id" : "46",
+          "linkedRelationshipId" : "44",
+          "sourceId" : "2"
+        } ],
+        "tags" : "Element,Container",
+        "technology" : "UI для управления отчетами"
+      } ],
+      "documentation" : { },
+      "group" : "Report Generation Services",
+      "id" : "1",
+      "location" : "Unspecified",
+      "name" : "Report Admin Frontend",
+      "properties" : {
+        "structurizr.dsl.identifier" : "reportadminfrontend"
+      },
+      "relationships" : [ {
+        "description" : "Отправляет запрос на генерацию отчета",
+        "destinationId" : "5",
+        "id" : "28",
+        "linkedRelationshipId" : "25",
+        "sourceId" : "1"
+      }, {
+        "description" : "Отправляет запрос на генерацию отчета",
+        "destinationId" : "4",
+        "id" : "29",
+        "linkedRelationshipId" : "25",
+        "sourceId" : "1"
+      }, {
+        "description" : "Отправляет запрос на генерацию отчета",
+        "destinationId" : "3",
+        "id" : "30",
+        "linkedRelationshipId" : "25",
+        "sourceId" : "1"
+      }, {
+        "description" : "Отправляет запрос на генерацию отчета",
+        "destinationId" : "14",
+        "id" : "47",
+        "linkedRelationshipId" : "44",
+        "sourceId" : "1"
+      }, {
+        "description" : "Отправляет запрос на генерацию отчета",
+        "destinationId" : "13",
+        "id" : "48",
+        "linkedRelationshipId" : "44",
+        "sourceId" : "1"
+      }, {
+        "description" : "Отправляет запрос на генерацию отчета",
+        "destinationId" : "12",
+        "id" : "49",
+        "linkedRelationshipId" : "44",
+        "sourceId" : "1"
+      } ],
+      "tags" : "Element,Software System"
+    }, {
+      "containers" : [ {
+        "components" : [ {
+          "description" : "Предоставляет endpoint'ы для работы с отчетами",
+          "documentation" : { },
+          "id" : "5",
+          "name" : "Report Controller",
+          "properties" : {
+            "structurizr.dsl.identifier" : "reportcontroller"
+          },
+          "relationships" : [ {
+            "destinationId" : "6",
+            "id" : "31",
+            "sourceId" : "5",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Spring MVC Rest Controller"
+        }, {
+          "description" : "Интерфейс, определяющий методы для запроса на генерацию отчета",
+          "documentation" : { },
+          "id" : "6",
+          "name" : "Report Request Saver",
+          "properties" : {
+            "structurizr.dsl.identifier" : "reportrequestsaver"
+          },
+          "relationships" : [ {
+            "destinationId" : "7",
+            "id" : "32",
+            "sourceId" : "6",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Java interface"
+        }, {
+          "documentation" : { },
+          "id" : "7",
+          "name" : "Реализация Report Request Saver",
+          "properties" : {
+            "structurizr.dsl.identifier" : "reportrequestsaverimpl"
+          },
+          "relationships" : [ {
+            "description" : "Читает и записывает заявки на отчеты",
+            "destinationId" : "11",
+            "id" : "33",
+            "sourceId" : "7",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Java interface"
+        }, {
+          "description" : "Интерфейс, определяющий методы ЖЦ генерации отчета",
+          "documentation" : { },
+          "id" : "8",
+          "name" : "Report Generation Processor",
+          "properties" : {
+            "structurizr.dsl.identifier" : "reportprocessor"
+          },
+          "relationships" : [ {
+            "destinationId" : "9",
+            "id" : "36",
+            "sourceId" : "8",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Java interface"
+        }, {
+          "documentation" : { },
+          "id" : "9",
+          "name" : "Реализация Report Generation Processor",
+          "properties" : {
+            "structurizr.dsl.identifier" : "reportprocessorimpl"
+          },
+          "relationships" : [ {
+            "description" : "Отправляет задачу на генерацию отчета",
+            "destinationId" : "18",
+            "id" : "37",
+            "sourceId" : "9",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Отправляет задачу на генерацию отчета",
+            "destinationId" : "17",
+            "id" : "38",
+            "linkedRelationshipId" : "37",
+            "sourceId" : "9"
+          }, {
+            "description" : "Читает и записывает информацию о генерации отчета",
+            "destinationId" : "11",
+            "id" : "43",
+            "sourceId" : "9",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Java interface"
+        }, {
+          "description" : "Обработчик жц генерации отчета",
+          "documentation" : { },
+          "id" : "10",
+          "name" : "Async Processor",
+          "properties" : {
+            "structurizr.dsl.identifier" : "asyncprocessor"
+          },
+          "relationships" : [ {
+            "description" : "Запускает обработку ЖЦ отчета",
+            "destinationId" : "8",
+            "id" : "35",
+            "sourceId" : "10",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        } ],
+        "description" : "Kotlin/Spring Boot",
+        "documentation" : { },
+        "id" : "4",
+        "name" : "Admin Backend",
+        "properties" : {
+          "structurizr.dsl.identifier" : "adminapi"
+        },
+        "relationships" : [ {
+          "description" : "Читает и записывает заявки на отчеты",
+          "destinationId" : "11",
+          "id" : "34",
+          "linkedRelationshipId" : "33",
+          "sourceId" : "4"
+        }, {
+          "description" : "Отправляет задачу на генерацию отчета",
+          "destinationId" : "18",
+          "id" : "39",
+          "linkedRelationshipId" : "37",
+          "sourceId" : "4"
+        }, {
+          "description" : "Отправляет задачу на генерацию отчета",
+          "destinationId" : "17",
+          "id" : "40",
+          "linkedRelationshipId" : "37",
+          "sourceId" : "4"
+        } ],
+        "tags" : "Element,Container",
+        "technology" : "REST API для управления отчетами"
+      }, {
+        "description" : "PostgreSQL",
+        "documentation" : { },
+        "id" : "11",
+        "name" : "Admin DB",
+        "properties" : {
+          "structurizr.dsl.identifier" : "dba"
+        },
+        "tags" : "Element,Container,Database",
+        "technology" : "База данных админки для хранения заявок и статусов отчетов"
+      } ],
+      "description" : "Основной сервис для управления отчетами, пишется с нуля",
+      "documentation" : { },
+      "group" : "Report Generation Services",
+      "id" : "3",
+      "location" : "Unspecified",
+      "name" : "Report Admin Backend",
+      "properties" : {
+        "structurizr.dsl.identifier" : "reportadminbackend"
+      },
+      "relationships" : [ {
+        "description" : "Отправляет задачу на генерацию отчета",
+        "destinationId" : "18",
+        "id" : "41",
+        "linkedRelationshipId" : "37",
+        "sourceId" : "3"
+      }, {
+        "description" : "Отправляет задачу на генерацию отчета",
+        "destinationId" : "17",
+        "id" : "42",
+        "linkedRelationshipId" : "37",
+        "sourceId" : "3"
+      } ],
+      "tags" : "Element,Software System"
+    }, {
+      "containers" : [ {
+        "components" : [ {
+          "description" : "Предоставляет endpoint'ы для работы с отчетами",
+          "documentation" : { },
+          "id" : "14",
+          "name" : "Report Controller",
+          "properties" : {
+            "structurizr.dsl.identifier" : "reportcontrollerdpg"
+          },
+          "relationships" : [ {
+            "destinationId" : "15",
+            "id" : "50",
+            "sourceId" : "14",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Spring MVC Rest Controller"
+        }, {
+          "description" : "Логика по генерации отчета",
+          "documentation" : { },
+          "id" : "15",
+          "name" : "Report Service",
+          "properties" : {
+            "structurizr.dsl.identifier" : "reportservicedpg"
+          },
+          "relationships" : [ {
+            "description" : "Читает и записывает заявки на отчеты",
+            "destinationId" : "16",
+            "id" : "51",
+            "sourceId" : "15",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Отправляет задачу на генерацию отчета",
+            "destinationId" : "18",
+            "id" : "53",
+            "sourceId" : "15",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Отправляет задачу на генерацию отчета",
+            "destinationId" : "17",
+            "id" : "54",
+            "linkedRelationshipId" : "53",
+            "sourceId" : "15"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Spring Bean"
+        } ],
+        "description" : "Kotlin/Spring Boot",
+        "documentation" : { },
+        "id" : "13",
+        "name" : "Admin Backend",
+        "properties" : {
+          "structurizr.dsl.identifier" : "adminapidpg"
+        },
+        "relationships" : [ {
+          "description" : "Читает и записывает заявки на отчеты",
+          "destinationId" : "16",
+          "id" : "52",
+          "linkedRelationshipId" : "51",
+          "sourceId" : "13"
+        }, {
+          "description" : "Отправляет задачу на генерацию отчета",
+          "destinationId" : "18",
+          "id" : "55",
+          "linkedRelationshipId" : "53",
+          "sourceId" : "13"
+        }, {
+          "description" : "Отправляет задачу на генерацию отчета",
+          "destinationId" : "17",
+          "id" : "56",
+          "linkedRelationshipId" : "53",
+          "sourceId" : "13"
+        } ],
+        "tags" : "Element,Container",
+        "technology" : "REST API для управления отчетами"
+      }, {
+        "description" : "PostgreSQL",
+        "documentation" : { },
+        "id" : "16",
+        "name" : "Admin DB",
+        "properties" : {
+          "structurizr.dsl.identifier" : "dbadpg"
+        },
+        "tags" : "Element,Container,Database",
+        "technology" : "База данных админки для хранения заявок и статусов отчетов"
+      } ],
+      "description" : "Основной сервис для управления отчетами, пишется с нуля",
+      "documentation" : { },
+      "group" : "Report Generation Services",
+      "id" : "12",
+      "location" : "Unspecified",
+      "name" : "Report Admin Backend Doppleganger",
+      "properties" : {
+        "structurizr.dsl.identifier" : "adminbackenddoppelganger"
+      },
+      "relationships" : [ {
+        "description" : "Отправляет задачу на генерацию отчета",
+        "destinationId" : "18",
+        "id" : "57",
+        "linkedRelationshipId" : "53",
+        "sourceId" : "12"
+      }, {
+        "description" : "Отправляет задачу на генерацию отчета",
+        "destinationId" : "17",
+        "id" : "58",
+        "linkedRelationshipId" : "53",
+        "sourceId" : "12"
+      } ],
+      "tags" : "Element,Software System"
+    }, {
+      "containers" : [ {
+        "description" : "Kotlin/Spring Boot",
+        "documentation" : { },
+        "id" : "18",
+        "name" : "Report Generator API",
+        "properties" : {
+          "structurizr.dsl.identifier" : "reportapi"
+        },
+        "relationships" : [ {
+          "description" : "Кладёт задачу в очередь (до 15 мин)",
+          "destinationId" : "19",
+          "id" : "59",
+          "sourceId" : "18",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container",
+        "technology" : "API для приема задач на генерацию отчетов"
+      }, {
+        "description" : "RabbitMQ / SQS / Kafka",
+        "documentation" : { },
+        "id" : "19",
+        "name" : "Report Queue",
+        "properties" : {
+          "structurizr.dsl.identifier" : "jobqueue"
+        },
+        "tags" : "Element,Container,Message Queue",
+        "technology" : "Асинхронная очередь для обработки задач"
+      }, {
+        "description" : "Kotlin/Spring Worker",
+        "documentation" : { },
+        "id" : "20",
+        "name" : "Report Worker",
+        "properties" : {
+          "structurizr.dsl.identifier" : "reportworker"
+        },
+        "relationships" : [ {
+          "description" : "Читает задачи из очереди",
+          "destinationId" : "19",
+          "id" : "60",
+          "sourceId" : "20",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Читает исходные данные для отчета",
+          "destinationId" : "21",
+          "id" : "61",
+          "sourceId" : "20",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Уведомляет о завершении генерации",
+          "destinationId" : "4",
+          "id" : "62",
+          "sourceId" : "20",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Уведомляет о завершении генерации",
+          "destinationId" : "3",
+          "id" : "63",
+          "linkedRelationshipId" : "62",
+          "sourceId" : "20"
+        } ],
+        "tags" : "Element,Container",
+        "technology" : "Воркер для генерации отчетов (до 15 мин)"
+      }, {
+        "description" : "PostgreSQL/BigQuery/etc.",
+        "documentation" : { },
+        "id" : "21",
+        "name" : "Raw Data DB",
+        "properties" : {
+          "structurizr.dsl.identifier" : "dbb"
+        },
+        "tags" : "Element,Container,Database",
+        "technology" : "База с исходными данными для отчетов"
+      } ],
+      "description" : "Сервис генерации отчетов, может работать до 15 минут",
+      "documentation" : { },
+      "group" : "Report Generation Services",
+      "id" : "17",
+      "location" : "Unspecified",
+      "name" : "Report Generator",
+      "properties" : {
+        "structurizr.dsl.identifier" : "reportgeneratorbackend"
+      },
+      "relationships" : [ {
+        "description" : "Уведомляет о завершении генерации",
+        "destinationId" : "4",
+        "id" : "64",
+        "linkedRelationshipId" : "62",
+        "sourceId" : "17"
+      }, {
+        "description" : "Уведомляет о завершении генерации",
+        "destinationId" : "3",
+        "id" : "65",
+        "linkedRelationshipId" : "62",
+        "sourceId" : "17"
+      } ],
+      "tags" : "Element,Software System"
+    } ]
+  },
+  "name" : "Report Generation System",
+  "properties" : {
+    "structurizr.dsl" : "d29ya3NwYWNlICJSZXBvcnQgR2VuZXJhdGlvbiBTeXN0ZW0iICJBUEktRmlyc3QgUmVwb3J0IEdlbmVyYXRpb24gQXJjaGl0ZWN0dXJlIiB7CgogICAgbW9kZWwgewogICAgICAgIGdyb3VwICJSZXBvcnQgR2VuZXJhdGlvbiBTZXJ2aWNlcyIgewogICAgICAgICAgICByZXBvcnRBZG1pbkZyb250ZW5kID0gc29mdHdhcmVTeXN0ZW0gIlJlcG9ydCBBZG1pbiBGcm9udGVuZCIgewogICAgICAgICAgICAgICAgYWRtaW5EYXNoYm9hcmQgPSBjb250YWluZXIgIkFkbWluIEZyb250ZW5kIiAiV2ViIFVJIiAiVUkg0LTQu9GPINGD0L/RgNCw0LLQu9C10L3QuNGPINC+0YLRh9C10YLQsNC80LgiCiAgICAgICAgICAgIH0KICAgICAgICAgICAgCiAgICAgICAgICAgIHJlcG9ydEFkbWluQmFja2VuZCA9IHNvZnR3YXJlU3lzdGVtICJSZXBvcnQgQWRtaW4gQmFja2VuZCIgewogICAgICAgICAgICAgICAgZGVzY3JpcHRpb24gItCe0YHQvdC+0LLQvdC+0Lkg0YHQtdGA0LLQuNGBINC00LvRjyDRg9C/0YDQsNCy0LvQtdC90LjRjyDQvtGC0YfQtdGC0LDQvNC4LCDQv9C40YjQtdGC0YHRjyDRgSDQvdGD0LvRjyIKCiAgICAgICAgICAgICAgICBhZG1pbkFwaSA9IGNvbnRhaW5lciAiQWRtaW4gQmFja2VuZCIgIktvdGxpbi9TcHJpbmcgQm9vdCIgIlJFU1QgQVBJINC00LvRjyDRg9C/0YDQsNCy0LvQtdC90LjRjyDQvtGC0YfQtdGC0LDQvNC4IiB7CiAgICAgICAgICAgICAgICAgICAgcmVwb3J0Q29udHJvbGxlciA9IGNvbXBvbmVudCAiUmVwb3J0IENvbnRyb2xsZXIiICLQn9GA0LXQtNC+0YHRgtCw0LLQu9GP0LXRgiBlbmRwb2ludCfRiyDQtNC70Y8g0YDQsNCx0L7RgtGLINGBINC+0YLRh9C10YLQsNC80LgiICJTcHJpbmcgTVZDIFJlc3QgQ29udHJvbGxlciIKICAgICAgICAgICAgICAgICAgICByZXBvcnRSZXF1ZXN0U2F2ZXIgPSBjb21wb25lbnQgIlJlcG9ydCBSZXF1ZXN0IFNhdmVyIiAi0JjQvdGC0LXRgNGE0LXQudGBLCDQvtC/0YDQtdC00LXQu9GP0Y7RidC40Lkg0LzQtdGC0L7QtNGLINC00LvRjyDQt9Cw0L/RgNC+0YHQsCDQvdCwINCz0LXQvdC10YDQsNGG0LjRjiDQvtGC0YfQtdGC0LAiICJKYXZhIGludGVyZmFjZSIKICAgICAgICAgICAgICAgICAgICByZXBvcnRSZXF1ZXN0U2F2ZXJJbXBsID0gY29tcG9uZW50ICLQoNC10LDQu9C40LfQsNGG0LjRjyBSZXBvcnQgUmVxdWVzdCBTYXZlciIgIiIgIkphdmEgaW50ZXJmYWNlIgogICAgICAgICAgICAgICAgICAgIHJlcG9ydFByb2Nlc3NvciA9IGNvbXBvbmVudCAiUmVwb3J0IEdlbmVyYXRpb24gUHJvY2Vzc29yIiAi0JjQvdGC0LXRgNGE0LXQudGBLCDQvtC/0YDQtdC00LXQu9GP0Y7RidC40Lkg0LzQtdGC0L7QtNGLINCW0KYg0LPQtdC90LXRgNCw0YbQuNC4INC+0YLRh9C10YLQsCIgIkphdmEgaW50ZXJmYWNlIgogICAgICAgICAgICAgICAgICAgIHJlcG9ydFByb2Nlc3NvckltcGwgPSBjb21wb25lbnQgItCg0LXQsNC70LjQt9Cw0YbQuNGPIFJlcG9ydCBHZW5lcmF0aW9uIFByb2Nlc3NvciIgIiIgIkphdmEgaW50ZXJmYWNlIgogICAgICAgICAgICAgICAgICAgIGFzeW5jUHJvY2Vzc29yID0gY29tcG9uZW50ICJBc3luYyBQcm9jZXNzb3IiICLQntCx0YDQsNCx0L7RgtGH0LjQuiDQttGGINCz0LXQvdC10YDQsNGG0LjQuCDQvtGC0YfQtdGC0LAiICIiIAogICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgZGJBID0gY29udGFpbmVyICJBZG1pbiBEQiIgIlBvc3RncmVTUUwiICLQkdCw0LfQsCDQtNCw0L3QvdGL0YUg0LDQtNC80LjQvdC60Lgg0LTQu9GPINGF0YDQsNC90LXQvdC40Y8g0LfQsNGP0LLQvtC6INC4INGB0YLQsNGC0YPRgdC+0LIg0L7RgtGH0LXRgtC+0LIiICJEYXRhYmFzZSIKICAgICAgICAgICAgfQoKICAgICAgICAgICAgYWRtaW5CYWNrZW5kRG9wcGVsZ2FuZ2VyID0gc29mdHdhcmVTeXN0ZW0gIlJlcG9ydCBBZG1pbiBCYWNrZW5kIERvcHBsZWdhbmdlciIgewogICAgICAgICAgICAgICAgZGVzY3JpcHRpb24gItCe0YHQvdC+0LLQvdC+0Lkg0YHQtdGA0LLQuNGBINC00LvRjyDRg9C/0YDQsNCy0LvQtdC90LjRjyDQvtGC0YfQtdGC0LDQvNC4LCDQv9C40YjQtdGC0YHRjyDRgSDQvdGD0LvRjyIKCiAgICAgICAgICAgICAgICBhZG1pbkFwaURwZyA9IGNvbnRhaW5lciAiQWRtaW4gQmFja2VuZCIgIktvdGxpbi9TcHJpbmcgQm9vdCIgIlJFU1QgQVBJINC00LvRjyDRg9C/0YDQsNCy0LvQtdC90LjRjyDQvtGC0YfQtdGC0LDQvNC4IiB7CiAgICAgICAgICAgICAgICAgICAgcmVwb3J0Q29udHJvbGxlckRwZyA9IGNvbXBvbmVudCAiUmVwb3J0IENvbnRyb2xsZXIiICLQn9GA0LXQtNC+0YHRgtCw0LLQu9GP0LXRgiBlbmRwb2ludCfRiyDQtNC70Y8g0YDQsNCx0L7RgtGLINGBINC+0YLRh9C10YLQsNC80LgiICJTcHJpbmcgTVZDIFJlc3QgQ29udHJvbGxlciIKICAgICAgICAgICAgICAgICAgICByZXBvcnRTZXJ2aWNlRHBnID0gY29tcG9uZW50ICJSZXBvcnQgU2VydmljZSIgItCb0L7Qs9C40LrQsCDQv9C+INCz0LXQvdC10YDQsNGG0LjQuCDQvtGC0YfQtdGC0LAiICJTcHJpbmcgQmVhbiIKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIGRiQURwZyA9IGNvbnRhaW5lciAiQWRtaW4gREIiICJQb3N0Z3JlU1FMIiAi0JHQsNC30LAg0LTQsNC90L3Ri9GFINCw0LTQvNC40L3QutC4INC00LvRjyDRhdGA0LDQvdC10L3QuNGPINC30LDRj9Cy0L7QuiDQuCDRgdGC0LDRgtGD0YHQvtCyINC+0YLRh9C10YLQvtCyIiAiRGF0YWJhc2UiCiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIHJlcG9ydEdlbmVyYXRvckJhY2tlbmQgPSBzb2Z0d2FyZVN5c3RlbSAiUmVwb3J0IEdlbmVyYXRvciIgewogICAgICAgICAgICAgICAgZGVzY3JpcHRpb24gItCh0LXRgNCy0LjRgSDQs9C10L3QtdGA0LDRhtC40Lgg0L7RgtGH0LXRgtC+0LIsINC80L7QttC10YIg0YDQsNCx0L7RgtCw0YLRjCDQtNC+IDE1INC80LjQvdGD0YIiCgogICAgICAgICAgICAgICAgcmVwb3J0QXBpID0gY29udGFpbmVyICJSZXBvcnQgR2VuZXJhdG9yIEFQSSIgIktvdGxpbi9TcHJpbmcgQm9vdCIgIkFQSSDQtNC70Y8g0L/RgNC40LXQvNCwINC30LDQtNCw0Ycg0L3QsCDQs9C10L3QtdGA0LDRhtC40Y4g0L7RgtGH0LXRgtC+0LIiCiAgICAgICAgICAgICAgICBqb2JRdWV1ZSA9IGNvbnRhaW5lciAiUmVwb3J0IFF1ZXVlIiAiUmFiYml0TVEgLyBTUVMgLyBLYWZrYSIgItCQ0YHQuNC90YXRgNC+0L3QvdCw0Y8g0L7Rh9C10YDQtdC00Ywg0LTQu9GPINC+0LHRgNCw0LHQvtGC0LrQuCDQt9Cw0LTQsNGHIiAiTWVzc2FnZSBRdWV1ZSIKICAgICAgICAgICAgICAgIHJlcG9ydFdvcmtlciA9IGNvbnRhaW5lciAiUmVwb3J0IFdvcmtlciIgIktvdGxpbi9TcHJpbmcgV29ya2VyIiAi0JLQvtGA0LrQtdGAINC00LvRjyDQs9C10L3QtdGA0LDRhtC40Lgg0L7RgtGH0LXRgtC+0LIgKNC00L4gMTUg0LzQuNC9KSIKICAgICAgICAgICAgICAgIGRiQiA9IGNvbnRhaW5lciAiUmF3IERhdGEgREIiICJQb3N0Z3JlU1FML0JpZ1F1ZXJ5L2V0Yy4iICLQkdCw0LfQsCDRgSDQuNGB0YXQvtC00L3Ri9C80Lgg0LTQsNC90L3Ri9C80Lgg0LTQu9GPINC+0YLRh9C10YLQvtCyIiAiRGF0YWJhc2UiCiAgICAgICAgICAgIH0KICAgICAgICB9CgogICAgICAgIHVzZXIgPSBwZXJzb24gIkFkbWluIFVzZXIiIHsKICAgICAgICAgICAgZGVzY3JpcHRpb24gItCQ0LTQvNC40L3QuNGB0YLRgNCw0YLQvtGALCDQutC+0YLQvtGA0YvQuSDQs9C10L3QtdGA0LjRgNGD0LXRgiDQvtGC0YfQtdGC0Ysg0YfQtdGA0LXQtyBVSSIKICAgICAgICB9CgogICAgICAgICMgUmVsYXRpb25zaGlwcwogICAgICAgIHVzZXIgLT4gYWRtaW5EYXNoYm9hcmQgItCl0L7Rh9GDINC+0YLRh9C10YIiCiAgICAgICAgYWRtaW5EYXNoYm9hcmQgLT4gcmVwb3J0Q29udHJvbGxlciAi0J7RgtC/0YDQsNCy0LvRj9C10YIg0LfQsNC/0YDQvtGBINC90LAg0LPQtdC90LXRgNCw0YbQuNGOINC+0YLRh9C10YLQsCIKICAgICAgICByZXBvcnRDb250cm9sbGVyIC0+IHJlcG9ydFJlcXVlc3RTYXZlciAiIgogICAgICAgIHJlcG9ydFJlcXVlc3RTYXZlciAtPiByZXBvcnRSZXF1ZXN0U2F2ZXJJbXBsICIiCiAgICAgICAgcmVwb3J0UmVxdWVzdFNhdmVySW1wbCAtPiBkYkEgItCn0LjRgtCw0LXRgiDQuCDQt9Cw0L/QuNGB0YvQstCw0LXRgiDQt9Cw0Y/QstC60Lgg0L3QsCDQvtGC0YfQtdGC0YsiCiAgICAgICAgYXN5bmNQcm9jZXNzb3IgLT4gcmVwb3J0UHJvY2Vzc29yICLQl9Cw0L/Rg9GB0LrQsNC10YIg0L7QsdGA0LDQsdC+0YLQutGDINCW0KYg0L7RgtGH0LXRgtCwIgogICAgICAgIHJlcG9ydFByb2Nlc3NvciAtPiByZXBvcnRQcm9jZXNzb3JJbXBsCiAgICAgICAgcmVwb3J0UHJvY2Vzc29ySW1wbCAtPiByZXBvcnRBcGkgItCe0YLQv9GA0LDQstC70Y/QtdGCINC30LDQtNCw0YfRgyDQvdCwINCz0LXQvdC10YDQsNGG0LjRjiDQvtGC0YfQtdGC0LAiCiAgICAgICAgcmVwb3J0UHJvY2Vzc29ySW1wbCAtPiBkYkEgItCn0LjRgtCw0LXRgiDQuCDQt9Cw0L/QuNGB0YvQstCw0LXRgiDQuNC90YTQvtGA0LzQsNGG0LjRjiDQviDQs9C10L3QtdGA0LDRhtC40Lgg0L7RgtGH0LXRgtCwIgogICAgICAgIAogICAgICAgICMgRG9wcGxlZ2FuZ2VyCiAgICAgICAgYWRtaW5EYXNoYm9hcmQgLT4gcmVwb3J0Q29udHJvbGxlckRwZyAi0J7RgtC/0YDQsNCy0LvRj9C10YIg0LfQsNC/0YDQvtGBINC90LAg0LPQtdC90LXRgNCw0YbQuNGOINC+0YLRh9C10YLQsCIKICAgICAgICByZXBvcnRDb250cm9sbGVyRHBnIC0+IHJlcG9ydFNlcnZpY2VEcGcgIiIKICAgICAgICByZXBvcnRTZXJ2aWNlRHBnIC0+IGRiQURwZyAi0KfQuNGC0LDQtdGCINC4INC30LDQv9C40YHRi9Cy0LDQtdGCINC30LDRj9Cy0LrQuCDQvdCwINC+0YLRh9C10YLRiyIKICAgICAgICByZXBvcnRTZXJ2aWNlRHBnIC0+IHJlcG9ydEFwaSAi0J7RgtC/0YDQsNCy0LvRj9C10YIg0LfQsNC00LDRh9GDINC90LAg0LPQtdC90LXRgNCw0YbQuNGOINC+0YLRh9C10YLQsCIKCiAgICAgICAgcmVwb3J0QXBpIC0+IGpvYlF1ZXVlICLQmtC70LDQtNGR0YIg0LfQsNC00LDRh9GDINCyINC+0YfQtdGA0LXQtNGMICjQtNC+IDE1INC80LjQvSkiCiAgICAgICAgcmVwb3J0V29ya2VyIC0+IGpvYlF1ZXVlICLQp9C40YLQsNC10YIg0LfQsNC00LDRh9C4INC40Lcg0L7Rh9C10YDQtdC00LgiCiAgICAgICAgcmVwb3J0V29ya2VyIC0+IGRiQiAi0KfQuNGC0LDQtdGCINC40YHRhdC+0LTQvdGL0LUg0LTQsNC90L3Ri9C1INC00LvRjyDQvtGC0YfQtdGC0LAiCiAgICAgICAgcmVwb3J0V29ya2VyIC0+IGFkbWluQXBpICLQo9Cy0LXQtNC+0LzQu9GP0LXRgiDQviDQt9Cw0LLQtdGA0YjQtdC90LjQuCDQs9C10L3QtdGA0LDRhtC40LgiCiAgICB9CgogICAgdmlld3MgewogICAgICAgIHN5c3RlbUxhbmRzY2FwZSAiU3lzdGVtTGFuZHNjYXBlIiB7CiAgICAgICAgICAgIGluY2x1ZGUgdXNlcgogICAgICAgICAgICBpbmNsdWRlIHJlcG9ydEFkbWluRnJvbnRlbmQKICAgICAgICAgICAgaW5jbHVkZSByZXBvcnRBZG1pbkJhY2tlbmQKICAgICAgICAgICAgaW5jbHVkZSByZXBvcnRHZW5lcmF0b3JCYWNrZW5kCiAgICAgICAgfQoKICAgICAgICBzeXN0ZW1Db250ZXh0IHJlcG9ydEFkbWluQmFja2VuZCAiU3lzdGVtQ29udGV4dCIgewogICAgICAgICAgICBpbmNsdWRlICoKICAgICAgICAgICAgaW5jbHVkZSB1c2VyCiAgICAgICAgICAgIGluY2x1ZGUgcmVwb3J0QWRtaW5Gcm9udGVuZAogICAgICAgIH0KCiAgICAgICAgY29udGFpbmVyIHJlcG9ydEFkbWluQmFja2VuZCAiUmVwb3J0QWRtaW5CYWNrZW5kIiB7CiAgICAgICAgICAgIGluY2x1ZGUgKgogICAgICAgICAgICBpbmNsdWRlIHVzZXIKICAgICAgICAgICAgaW5jbHVkZSByZXBvcnRBZG1pbkZyb250ZW5kCiAgICAgICAgfQoKICAgICAgICBjb250YWluZXIgcmVwb3J0R2VuZXJhdG9yQmFja2VuZCAiUmVwb3J0R2VuZXJhdG9yQmFja2VuZCIgewogICAgICAgICAgICBpbmNsdWRlICoKICAgICAgICB9CgogICAgICAgIGNvbXBvbmVudCBhZG1pbkFwaSAiUmVwb3J0QWRtaW5BcGkiIHsKICAgICAgICAgICAgaW5jbHVkZSAqCiAgICAgICAgfQoKICAgICAgICBjb21wb25lbnQgYWRtaW5BcGlEcGcgIlJlcG9ydEFkbWluQXBpRHBnIiB7CiAgICAgICAgICAgIGluY2x1ZGUgKgogICAgICAgIH0KCiAgICAgICAgZHluYW1pYyByZXBvcnRBZG1pbkJhY2tlbmQgIlJlcG9ydEdlbmVyYXRpb24iICLQn9C+0LrQsNC30YvQstCw0LXRgiDQv9GA0L7RhtC10YHRgSDQs9C10L3QtdGA0LDRhtC40Lgg0L7RgtGH0LXRgtCwICjQtNC+IDE1INC80LjQvdGD0YIpIiB7CiAgICAgICAgICAgIGFkbWluQXBpIC0+IGRiQSAiMS4g0KHQvtGF0YDQsNC90Y/QtdGCINC30LDRj9Cy0LrRgyDQvdCwINC+0YLRh9C10YIiCiAgICAgICAgICAgIGFkbWluQXBpIC0+IHJlcG9ydEFwaSAiMi4g0J7RgtC/0YDQsNCy0LvRj9C10YIg0LfQsNC00LDRh9GDINC90LAg0LPQtdC90LXRgNCw0YbQuNGOIgogICAgICAgICAgICByZXBvcnRBcGkgLT4gam9iUXVldWUgIjMuINCa0LvQsNC00ZHRgiDQt9Cw0LTQsNGH0YMg0LIg0L7Rh9C10YDQtdC00YwiCiAgICAgICAgICAgIHJlcG9ydFdvcmtlciAtPiBqb2JRdWV1ZSAiNC4g0J/QvtC70YPRh9Cw0LXRgiDQt9Cw0LTQsNGH0YMgKNC00L4gMTUg0LzQuNC9KSIKICAgICAgICAgICAgcmVwb3J0V29ya2VyIC0+IGRiQiAiNS4g0KfQuNGC0LDQtdGCINC40YHRhdC+0LTQvdGL0LUg0LTQsNC90L3Ri9C1IgogICAgICAgICAgICByZXBvcnRXb3JrZXIgLT4gYWRtaW5BcGkgIjYuINCj0LLQtdC00L7QvNC70Y/QtdGCINC+INC30LDQstC10YDRiNC10L3QuNC4INCz0LXQvdC10YDQsNGG0LjQuCIKICAgICAgICAgICAgYWRtaW5BcGkgLT4gZGJBICI3LiDQntCx0L3QvtCy0LvRj9C10YIg0YHRgtCw0YLRg9GBINC+0YLRh9C10YLQsCIKICAgICAgICB9CgogICAgICAgIHN0eWxlcyB7CiAgICAgICAgICAgIGVsZW1lbnQgIlNvZnR3YXJlIFN5c3RlbSIgewogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjMTE2OGJkCiAgICAgICAgICAgICAgICBjb2xvciAjZmZmZmZmCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiQ29udGFpbmVyIiB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICM0MzhkZDUKICAgICAgICAgICAgICAgIGNvbG9yICNmZmZmZmYKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJQZXJzb24iIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzA4NDI3YgogICAgICAgICAgICAgICAgY29sb3IgI2ZmZmZmZgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIkRhdGFiYXNlIiB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICNEMjlGNTEKICAgICAgICAgICAgICAgIGNvbG9yICNmZmZmZmYKICAgICAgICAgICAgICAgIHNoYXBlIEN5bGluZGVyCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiTWVzc2FnZSBRdWV1ZSIgewogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjRDI5RjUxCiAgICAgICAgICAgICAgICBzaGFwZSBQaXBlCiAgICAgICAgICAgICAgICBjb2xvciAjZmZmZmZmCiAgICAgICAgICAgIH0KICAgICAgICB9CgogICAgICAgIHRoZW1lIGRlZmF1bHQKICAgIH0KfQ=="
+  },
+  "views" : {
+    "componentViews" : [ {
+      "containerId" : "4",
+      "dimensions" : {
+        "height" : 1905,
+        "width" : 3174
+      },
+      "elements" : [ {
+        "id" : "1",
+        "x" : 50,
+        "y" : 35
+      }, {
+        "id" : "5",
+        "x" : 774,
+        "y" : 35
+      }, {
+        "id" : "6",
+        "x" : 764,
+        "y" : 520
+      }, {
+        "id" : "7",
+        "x" : 764,
+        "y" : 1005
+      }, {
+        "id" : "8",
+        "x" : 1969,
+        "y" : 520
+      }, {
+        "id" : "9",
+        "x" : 1969,
+        "y" : 1005
+      }, {
+        "id" : "10",
+        "x" : 1959,
+        "y" : 35
+      }, {
+        "id" : "11",
+        "x" : 1329,
+        "y" : 1520
+      }, {
+        "id" : "17",
+        "x" : 2674,
+        "y" : 1005
+      } ],
+      "externalContainerBoundariesVisible" : false,
+      "key" : "ReportAdminApi",
+      "order" : 5,
+      "relationships" : [ {
+        "id" : "28"
+      }, {
+        "id" : "31"
+      }, {
+        "id" : "32"
+      }, {
+        "id" : "33"
+      }, {
+        "id" : "35"
+      }, {
+        "id" : "36"
+      }, {
+        "id" : "38"
+      }, {
+        "id" : "43"
+      } ]
+    }, {
+      "containerId" : "13",
+      "dimensions" : {
+        "height" : 1448,
+        "width" : 2180
+      },
+      "elements" : [ {
+        "id" : "1",
+        "x" : 95,
+        "y" : 55
+      }, {
+        "id" : "14",
+        "x" : 857,
+        "y" : 55
+      }, {
+        "id" : "15",
+        "x" : 857,
+        "y" : 544
+      }, {
+        "id" : "16",
+        "x" : 857,
+        "y" : 1034
+      }, {
+        "id" : "17",
+        "x" : 1645,
+        "y" : 544
+      } ],
+      "externalContainerBoundariesVisible" : false,
+      "key" : "ReportAdminApiDpg",
+      "order" : 6,
+      "relationships" : [ {
+        "id" : "47"
+      }, {
+        "id" : "50"
+      }, {
+        "id" : "51"
+      }, {
+        "id" : "54"
+      } ]
+    } ],
+    "configuration" : {
+      "branding" : { },
+      "lastSavedView" : "SystemLandscape",
+      "styles" : {
+        "elements" : [ {
+          "background" : "#1168bd",
+          "color" : "#ffffff",
+          "tag" : "Software System"
+        }, {
+          "background" : "#438dd5",
+          "color" : "#ffffff",
+          "tag" : "Container"
+        }, {
+          "background" : "#08427b",
+          "color" : "#ffffff",
+          "tag" : "Person"
+        }, {
+          "background" : "#d29f51",
+          "color" : "#ffffff",
+          "shape" : "Cylinder",
+          "tag" : "Database"
+        }, {
+          "background" : "#d29f51",
+          "color" : "#ffffff",
+          "shape" : "Pipe",
+          "tag" : "Message Queue"
+        } ]
+      },
+      "terminology" : { },
+      "themes" : [ "https://static.structurizr.com/themes/default/theme.json" ]
+    },
+    "containerViews" : [ {
+      "dimensions" : {
+        "height" : 1666,
+        "width" : 2078
+      },
+      "elements" : [ {
+        "id" : "1",
+        "x" : 663,
+        "y" : 65
+      }, {
+        "id" : "4",
+        "x" : 663,
+        "y" : 647
+      }, {
+        "id" : "11",
+        "x" : 663,
+        "y" : 1190
+      }, {
+        "id" : "17",
+        "x" : 1577,
+        "y" : 647
+      }, {
+        "id" : "22",
+        "x" : 49,
+        "y" : 15
+      } ],
+      "externalSoftwareSystemBoundariesVisible" : false,
+      "key" : "ReportAdminBackend",
+      "order" : 3,
+      "relationships" : [ {
+        "id" : "24"
+      }, {
+        "id" : "29"
+      }, {
+        "id" : "34"
+      }, {
+        "id" : "40",
+        "vertices" : [ {
+          "x" : 1349,
+          "y" : 947
+        } ]
+      }, {
+        "id" : "64",
+        "vertices" : [ {
+          "x" : 1349,
+          "y" : 647
+        } ]
+      } ],
+      "softwareSystemId" : "3"
+    }, {
+      "dimensions" : {
+        "height" : 1748,
+        "width" : 2480
+      },
+      "elements" : [ {
+        "id" : "3",
+        "x" : 355,
+        "y" : 1240
+      }, {
+        "id" : "12",
+        "x" : 355,
+        "y" : 1240
+      }, {
+        "id" : "18",
+        "x" : 355,
+        "y" : 165
+      }, {
+        "id" : "19",
+        "x" : 1120,
+        "y" : 165
+      }, {
+        "id" : "20",
+        "x" : 1120,
+        "y" : 705
+      }, {
+        "id" : "21",
+        "x" : 1955,
+        "y" : 705
+      } ],
+      "externalSoftwareSystemBoundariesVisible" : false,
+      "key" : "ReportGeneratorBackend",
+      "order" : 4,
+      "paperSize" : "A5_Landscape",
+      "relationships" : [ {
+        "id" : "41"
+      }, {
+        "id" : "57"
+      }, {
+        "id" : "59"
+      }, {
+        "id" : "60"
+      }, {
+        "id" : "61"
+      }, {
+        "id" : "63"
+      } ],
+      "softwareSystemId" : "17"
+    } ],
+    "dynamicViews" : [ {
+      "description" : "Показывает процесс генерации отчета (до 15 минут)",
+      "dimensions" : {
+        "height" : 2102,
+        "width" : 2365
+      },
+      "elementId" : "3",
+      "elements" : [ {
+        "id" : "4",
+        "x" : 695,
+        "y" : 315
+      }, {
+        "id" : "11",
+        "x" : 1360,
+        "y" : 315
+      }, {
+        "id" : "18",
+        "x" : 220,
+        "y" : 1021
+      }, {
+        "id" : "19",
+        "x" : 230,
+        "y" : 1511
+      }, {
+        "id" : "20",
+        "x" : 985,
+        "y" : 1511
+      }, {
+        "id" : "21",
+        "x" : 1695,
+        "y" : 1511
+      } ],
+      "externalBoundariesVisible" : false,
+      "key" : "ReportGeneration",
+      "order" : 7,
+      "relationships" : [ {
+        "description" : "1. Сохраняет заявку на отчет",
+        "id" : "34",
+        "order" : "1",
+        "response" : false,
+        "vertices" : [ {
+          "x" : 1252,
+          "y" : 615
+        } ]
+      }, {
+        "description" : "2. Отправляет задачу на генерацию",
+        "id" : "39",
+        "order" : "2",
+        "response" : false
+      }, {
+        "description" : "3. Кладёт задачу в очередь",
+        "id" : "59",
+        "order" : "3",
+        "response" : false
+      }, {
+        "description" : "4. Получает задачу (до 15 мин)",
+        "id" : "60",
+        "order" : "4",
+        "response" : false
+      }, {
+        "description" : "5. Читает исходные данные",
+        "id" : "61",
+        "order" : "5",
+        "response" : false
+      }, {
+        "description" : "6. Уведомляет о завершении генерации",
+        "id" : "62",
+        "order" : "6",
+        "response" : false
+      }, {
+        "description" : "7. Обновляет статус отчета",
+        "id" : "34",
+        "order" : "7",
+        "response" : false
+      } ]
+    } ],
+    "systemContextViews" : [ {
+      "dimensions" : {
+        "height" : 1034,
+        "width" : 2180
+      },
+      "elements" : [ {
+        "id" : "1",
+        "x" : 760,
+        "y" : 65
+      }, {
+        "id" : "3",
+        "x" : 760,
+        "y" : 575
+      }, {
+        "id" : "17",
+        "x" : 1660,
+        "y" : 575
+      }, {
+        "id" : "22",
+        "x" : 50,
+        "y" : 15
+      } ],
+      "enterpriseBoundaryVisible" : true,
+      "key" : "SystemContext",
+      "order" : 2,
+      "relationships" : [ {
+        "id" : "24"
+      }, {
+        "id" : "30"
+      }, {
+        "id" : "42",
+        "vertices" : [ {
+          "x" : 1445,
+          "y" : 625
+        } ]
+      }, {
+        "id" : "65",
+        "vertices" : [ {
+          "x" : 1430,
+          "y" : 890
+        } ]
+      } ],
+      "softwareSystemId" : "3"
+    } ],
+    "systemLandscapeViews" : [ {
+      "dimensions" : {
+        "height" : 1134,
+        "width" : 2296
+      },
+      "elements" : [ {
+        "id" : "1",
+        "x" : 789,
+        "y" : 65
+      }, {
+        "id" : "3",
+        "x" : 789,
+        "y" : 675
+      }, {
+        "id" : "17",
+        "x" : 1775,
+        "y" : 675
+      }, {
+        "id" : "22",
+        "x" : 49,
+        "y" : 15
+      } ],
+      "enterpriseBoundaryVisible" : true,
+      "key" : "SystemLandscape",
+      "order" : 1,
+      "relationships" : [ {
+        "id" : "24"
+      }, {
+        "id" : "30"
+      }, {
+        "id" : "42",
+        "vertices" : [ {
+          "x" : 1530,
+          "y" : 980
+        } ]
+      }, {
+        "id" : "65",
+        "vertices" : [ {
+          "x" : 1535,
+          "y" : 645
+        } ]
+      } ]
+    } ]
+  }
+}
