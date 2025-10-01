@@ -1,0 +1,177 @@
+asyncapi: 3.0.0
+info:
+  title: Report Generation Events API
+  description: Асинхронные события для генерации отчетов
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@example.com
+
+servers:
+  development:
+    host: localhost:9092
+    protocol: kafka
+    description: Kafka server
+    bindings:
+      kafka:
+        schemaRegistryUrl: 'https://my-schema-registry.com'
+        schemaRegistryVendor: 'confluent'
+        bindingVersion: '0.5.0'
+
+channels:
+  report.generation.requested:
+    address: report.generation.requested
+    title: Report Generation Requested
+    summary: Канал для запросов на генерацию отчетов
+    bindings:
+      kafka:
+        topic: report.generation.requested
+    messages:
+      ReportGenerationRequested:
+        $ref: '#/components/messages/ReportGenerationRequested'
+
+  report.generation.started:
+    address: report.generation.started
+    title: Report Generation Started
+    summary: Канал для уведомлений о начале генерации
+    bindings:
+      kafka:
+        topic: report.generation.started
+    messages:
+      ReportGenerationStarted:
+        $ref: '#/components/messages/ReportGenerationStarted'
+
+  report.generation.progress:
+    address: report.generation.progress
+    title: Report Generation Progress
+    summary: Канал для обновлений прогресса генерации
+    bindings:
+      kafka:
+        topic: report.generation.progress
+    messages:
+      ReportGenerationProgress:
+        $ref: '#/components/messages/ReportGenerationProgress'
+
+  report.generation.completed:
+    address: report.generation.completed
+    title: Report Generation Completed
+    summary: Канал для уведомлений о завершении генерации
+    bindings:
+      kafka:
+        topic: report.generation.completed
+    messages:
+      ReportGenerationCompleted:
+        $ref: '#/components/messages/ReportGenerationCompleted'
+
+  report.generation.failed:
+    address: report.generation.failed
+    title: Report Generation Failed
+    summary: Канал для уведомлений об ошибках генерации
+    bindings:
+      kafka:
+        topic: report.generation.failed
+    messages:
+      ReportGenerationFailed:
+        $ref: '#/components/messages/ReportGenerationFailed'
+
+  report.generation.cancelled:
+    address: report.generation.cancelled
+    title: Report Generation Cancelled
+    summary: Канал для уведомлений об отмене генерации
+    bindings:
+      kafka:
+        topic: report.generation.cancelled
+    messages:
+      ReportGenerationCancelled:
+        $ref: '#/components/messages/ReportGenerationCancelled'
+
+components:
+  messages:
+    ReportGenerationRequested:
+      messageId: ReportGenerationRequested
+      title: Запрос на генерацию отчета
+      summary: Событие запроса на генерацию отчета
+      contentType: application/vnd.apache.avro;version=1.9.0
+      headers:
+        $ref: '#/components/schemas/MessageHeaders'
+      payload:
+        schemaFormat: 'application/vnd.apache.avro;version=1.9.0'
+        schema:
+          $ref: 'https://schema-registry.example.com/schemas/report-generation-requested/1'
+
+    ReportGenerationStarted:
+      messageId: ReportGenerationStarted
+      title: Генерация отчета началась
+      summary: Событие начала генерации отчета
+      contentType: application/vnd.apache.avro;version=1.9.0
+      headers:
+        $ref: '#/components/schemas/MessageHeaders'
+      payload:
+        schemaFormat: 'application/vnd.apache.avro;version=1.9.0'
+        schema:
+          $ref: 'https://schema-registry.example.com/schemas/report-generation-started/1'
+
+    ReportGenerationProgress:
+      messageId: ReportGenerationProgress
+      title: Прогресс генерации отчета
+      summary: Событие обновления прогресса генерации
+      contentType: application/vnd.apache.avro;version=1.9.0
+      headers:
+        $ref: '#/components/schemas/MessageHeaders'
+      payload:
+        schemaFormat: 'application/vnd.apache.avro;version=1.9.0'
+        schema:
+          $ref: 'https://schema-registry.example.com/schemas/report-generation-progress/1'
+
+    ReportGenerationCompleted:
+      messageId: ReportGenerationCompleted
+      title: Генерация отчета завершена
+      summary: Событие успешного завершения генерации
+      contentType: application/vnd.apache.avro;version=1.9.0
+      headers:
+        $ref: '#/components/schemas/MessageHeaders'
+      payload:
+        schemaFormat: 'application/vnd.apache.avro;version=1.9.0'
+        schema:
+          $ref: 'https://schema-registry.example.com/schemas/report-generation-completed/1'
+
+    ReportGenerationFailed:
+      messageId: ReportGenerationFailed
+      title: Генерация отчета завершилась с ошибкой
+      summary: Событие ошибки при генерации
+      contentType: application/vnd.apache.avro;version=1.9.0
+      headers:
+        $ref: '#/components/schemas/MessageHeaders'
+      payload:
+        schemaFormat: 'application/vnd.apache.avro;version=1.9.0'
+        schema:
+          $ref: 'https://schema-registry.example.com/schemas/report-generation-failed/1'
+
+    ReportGenerationCancelled:
+      messageId: ReportGenerationCancelled
+      title: Генерация отчета отменена
+      summary: Событие отмены генерации
+      contentType: application/vnd.apache.avro;version=1.9.0
+      headers:
+        $ref: '#/components/schemas/MessageHeaders'
+      payload:
+        schemaFormat: 'application/vnd.apache.avro;version=1.9.0'
+        schema:
+          $ref: 'https://schema-registry.example.com/schemas/report-generation-cancelled/1'
+
+  schemas:
+    MessageHeaders:
+      type: object
+      properties:
+        correlationId:
+          type: string
+          description: Идентификатор корреляции для отслеживания
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        timestamp:
+          type: string
+          format: date-time
+          description: Время создания события
+          example: "2024-01-15T10:30:00Z"
+      required:
+        - correlationId
+        - timestamp 
